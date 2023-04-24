@@ -6,6 +6,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "TankPlayerController.h"
 
+APlayerTank::APlayerTank() : ABaseTank()
+{
+	Tags.Add(FName(TEXT("player")));
+}
+
 void APlayerTank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

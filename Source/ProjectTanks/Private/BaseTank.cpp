@@ -10,6 +10,8 @@ ABaseTank::ABaseTank()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Tags.Add(FName(TEXT("tank")));
+
 	Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body"));
 	RootComponent = Body;
 
@@ -30,7 +32,7 @@ void ABaseTank::ShootBullet()
 	{
 		bIsShooting = true;
 		// set the position and direction of the bullet and activate it
-		bullet->SetActorLocationAndRotation(MuzzleLocation, GetActorRotation());
+		bullet->SetActorLocationAndRotation(GetActorLocation(), Turret->GetComponentRotation());
 		bullet->Activate();
 
 		// set isShooting back to false on next tick
@@ -91,14 +93,11 @@ void ABaseTank::Move(FVector2D inputNormalized)
 	float DotDirForw = FVector::DotProduct(FVector(inputNormalized.Y, inputNormalized.X, 0), GetActorForwardVector());
 
 	// if the direction is not parallel to the forward we can rotate
-	if (!FMath::IsNearlyEqual(DotDirRight, 0))
-	{
 		float rotation = bodyRotationSpeed * GetWorld()->GetDeltaSeconds();
 		// now adjust the orientation with the dots sign
 		rotation *= FMath::Sign(DotDirForw) * FMath::Sign(DotDirRight);
 
 		AddActorWorldRotation(FRotator(0, rotation, 0));
-	}
 
 	// finally add the forward movement input
 	AddMovementInput(GetActorForwardVector(), 1 * FMath::Sign(DotDirForw));

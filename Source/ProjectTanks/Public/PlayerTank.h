@@ -14,6 +14,9 @@ class PROJECTTANKS_API APlayerTank : public ABaseTank
 {
 	GENERATED_BODY()
 
+public:
+	APlayerTank();
+
 protected:
 
 	bool bUsingMouseKeyboard = false;
