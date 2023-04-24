@@ -33,7 +33,7 @@ protected:
 	UActorPoolComponent* Mines;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float bodyRotationSpeed;
+	float bodyRotationSpeed = 200;
 
 	float shootStopDuration = .1f;
 

@@ -57,7 +57,7 @@ void APlayerTank::Tick(float DeltaTime)
 
 		// compute the look at rotation and set it to the turret
 		FRotator rotation = (hit.Location - Turret->GetComponentLocation()).Rotation();
-		Turret->SetWorldRotation(rotation);
+		Turret->SetWorldRotation(FMath::RInterpTo(Turret->GetComponentRotation(), rotation, GetWorld()->DeltaTimeSeconds, 10));
 	}
 }
 
@@ -82,7 +82,7 @@ void APlayerTank::SetGamepadAim(const FInputActionValue& ActionValue)
 	FVector2D input = ActionValue.Get<FInputActionValue::Axis2D>();
 	FVector input3D(-input.Y, input.X, 0);
 
-	Turret->SetWorldRotation(FMath::RInterpTo(Turret->GetComponentRotation(), input3D.Rotation(), GetWorld()->DeltaTimeSeconds, 5));
+	Turret->SetWorldRotation(FMath::RInterpTo(Turret->GetComponentRotation(), input3D.Rotation(), GetWorld()->DeltaTimeSeconds, 10));
 }
 
 void APlayerTank::ShootBulletAction(const struct FInputActionValue& ActionValue)
