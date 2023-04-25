@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "PoolableActor.h"
 #include "GameFramework/Actor.h"
 #include "BaseBullet.generated.h"
@@ -22,11 +22,11 @@ public:
 	int32 MaxBounces = 1;
 
 protected:	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* Mesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UCapsuleComponent* capsule;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Box;
 
 	int currentBounces = 0;
 
@@ -38,7 +38,7 @@ public:
 
 	virtual void Reset() override;
 
-	void Bounce(FVector HitNormal);
+	void Bounce(const FVector& HitNormal, const FVector& HitLocation);
 
 	UFUNCTION()
 	virtual void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

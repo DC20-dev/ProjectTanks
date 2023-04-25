@@ -5,6 +5,7 @@
 #include "ActorPoolComponent.h"
 #include "BaseBullet.h"
 #include "BaseMine.h"
+#include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -23,6 +24,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UStaticMeshComponent* Turret;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UStaticMeshComponent* Barrel;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UBoxComponent* Collider;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	UFloatingPawnMovement* Movement;
 
@@ -37,8 +44,8 @@ protected:
 
 	float shootStopDuration = .1f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack")
-	UStaticMeshComponent* Barrel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack", meta = (ToolTip="Use offset to fix muzzle position depending on the barrel pivot"))
+	float MuzzleOffset = 50;
 
 	bool bIsShooting = false;
 

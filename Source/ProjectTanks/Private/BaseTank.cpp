@@ -12,17 +12,28 @@ ABaseTank::ABaseTank()
 
 	Tags.Add(FName(TEXT("tank")));
 
+	Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
+	check(Collider);
+	Collider->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
+	Collider->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
+	Collider->SetNotifyRigidBodyCollision(true);
+	Collider->AttachToComponent(Body, FAttachmentTransformRules::KeepRelativeTransform);
+	RootComponent = Collider;
+
 	Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body"));
 	check(Body);
-	RootComponent = Body;
+	Body->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Body->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	Turret = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret"));
 	check(Turret);
 	Turret->AttachToComponent(Body, FAttachmentTransformRules::KeepRelativeTransform);
+	Turret->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Muzzle"));
 	check(Barrel);
 	Barrel->AttachToComponent(Turret, FAttachmentTransformRules::KeepRelativeTransform);
+	Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
 	check(Movement);
@@ -41,7 +52,8 @@ void ABaseTank::ShootBullet()
 	{
 		bIsShooting = true;
 		// set the position and direction of the bullet and activate it
-		bullet->SetActorLocationAndRotation(Barrel->GetComponentLocation(), Turret->GetComponentRotation());
+		FVector muzzleLocation = Barrel->GetComponentLocation() + Turret->GetForwardVector() * MuzzleOffset;
+		bullet->SetActorLocationAndRotation(muzzleLocation, Turret->GetComponentRotation());
 		bullet->Activate();
 
 		// set isShooting back to false on next tick

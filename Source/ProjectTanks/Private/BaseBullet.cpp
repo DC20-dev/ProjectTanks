@@ -10,9 +10,19 @@ ABaseBullet::ABaseBullet()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	Tags.Add(FName(TEXT("bullet")));
+
+	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("collider"));
+	check(Box);
+	Box->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
+	Box->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
+	Box->SetNotifyRigidBodyCollision(true);
+
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("mesh"));
-	RootComponent = Mesh;
-	capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("collider"));
+	check(Mesh);
+	RootComponent = Box;
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Mesh->AttachToComponent(Box, FAttachmentTransformRules::KeepRelativeTransform);
+
 	bIsActive = false;
 	SetActorHiddenInGame(true);
 }
@@ -20,29 +30,29 @@ ABaseBullet::ABaseBullet()
 void ABaseBullet::Activate()
 {
 	Super::Activate();
+	Box->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
 }
 
 
 void ABaseBullet::Reset()
 {
 	Super::Reset();
+	Box->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	currentBounces = 0;
 	// reset to initial state
 }
 
-void ABaseBullet::Bounce(FVector HitNormal)
+void ABaseBullet::Bounce(const FVector& HitNormal, const FVector& HitLocation)
 {
-	// get the dot between forward (negative) and the normal
+	// get the dot between forward (negative) and the normal to know the angle
 	float DirForwardDot = FVector::DotProduct(-GetActorForwardVector(), HitNormal);
-	float angle = FMath::Acos(DirForwardDot);
+	// get the cross between the same vectors to know the angle sign (Z sign is the one to use)
+	FVector DirForwardCross = FVector::CrossProduct(-GetActorForwardVector(), HitNormal).GetSignVector();
 
-	FVector rotationAxis = FVector::CrossProduct(HitNormal, -GetActorForwardVector());
-	rotationAxis.Normalize();
+	float angle = FMath::RadiansToDegrees(FMath::Acos(DirForwardDot));
+	angle *= DirForwardCross.Z;
 
-	// rotate around the collision point and reverse the bullet
-	FVector newLocation = GetActorLocation().RotateAngleAxis(angle*2, rotationAxis);
-	SetActorLocation(newLocation);
-	AddActorLocalRotation(FRotator(0, 180, 0));
+	AddActorLocalRotation(FRotator(0, 180 + 2 * angle, 0));
 
 	currentBounces++;
 }
@@ -50,15 +60,32 @@ void ABaseBullet::Bounce(FVector HitNormal)
 void ABaseBullet::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// if other actor is the wall and bullet can bounce then bounce
-	if (false)
+	if (OtherActor->ActorHasTag(TEXT("tank")))
+	{
+		// do tank stuff
+		Reset();
+	}
+	else if (OtherActor->ActorHasTag(TEXT("mine")))
+	{
+		// do mine stuff
+		Reset();
+	}
+	else if (OtherActor->ActorHasTag(TEXT("bullet")))
+	{
+		// do bullet stuff
+		Reset();
+	}
+	else
 	{
 		if (currentBounces < MaxBounces)
 		{
-			Bounce(Hit.ImpactNormal);
+			Bounce(Hit.Normal, Hit.Location);
+		}
+		else
+		{
+			Reset();
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("On component hit executed"));
 }
 
 
@@ -66,7 +93,7 @@ void ABaseBullet::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Othe
 void ABaseBullet::BeginPlay()
 {
 	Super::BeginPlay();
-	capsule->OnComponentHit.AddDynamic(this, &ABaseBullet::OnComponentHit);
+	Box->OnComponentHit.AddDynamic(this, &ABaseBullet::OnComponentHit);
 }
 
 // Called every frame
@@ -80,6 +107,6 @@ void ABaseBullet::Tick(float DeltaTime)
 
 	// move projectile forward
 	FVector newLocation = GetActorLocation() + GetActorForwardVector() * Speed * DeltaTime;
-	SetActorLocation(newLocation);
+	SetActorLocation(newLocation, true);
 }
 
