@@ -44,16 +44,7 @@ void ABaseBullet::Reset()
 
 void ABaseBullet::Bounce(const FVector& HitNormal, const FVector& HitLocation)
 {
-	// get the dot between forward (negative) and the normal to know the angle
-	float DirForwardDot = FVector::DotProduct(-GetActorForwardVector(), HitNormal);
-	// get the cross between the same vectors to know the angle sign (Z sign is the one to use)
-	FVector DirForwardCross = FVector::CrossProduct(-GetActorForwardVector(), HitNormal).GetSignVector();
-
-	float angle = FMath::RadiansToDegrees(FMath::Acos(DirForwardDot));
-	angle *= DirForwardCross.Z;
-
-	AddActorLocalRotation(FRotator(0, 180 + 2 * angle, 0));
-
+	SetActorRotation(GetActorForwardVector().MirrorByVector(HitNormal).Rotation());
 	currentBounces++;
 }
 
