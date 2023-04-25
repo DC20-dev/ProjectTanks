@@ -13,16 +13,25 @@ ABaseTank::ABaseTank()
 	Tags.Add(FName(TEXT("tank")));
 
 	Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body"));
+	check(Body);
 	RootComponent = Body;
 
 	Turret = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret"));
+	check(Turret);
 	Turret->AttachToComponent(Body, FAttachmentTransformRules::KeepRelativeTransform);
 
+	Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Muzzle"));
+	check(Barrel);
+	Barrel->AttachToComponent(Turret, FAttachmentTransformRules::KeepRelativeTransform);
+
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
+	check(Movement);
 
 	Bullets = CreateDefaultSubobject<UActorPoolComponent>(TEXT("Bullets"));
+	check(Bullets);
 
 	Mines = CreateDefaultSubobject<UActorPoolComponent>(TEXT("Mines"));
+	check(Mines);
 }
 
 void ABaseTank::ShootBullet()
@@ -32,7 +41,7 @@ void ABaseTank::ShootBullet()
 	{
 		bIsShooting = true;
 		// set the position and direction of the bullet and activate it
-		bullet->SetActorLocationAndRotation(GetActorLocation(), Turret->GetComponentRotation());
+		bullet->SetActorLocationAndRotation(Barrel->GetComponentLocation(), Turret->GetComponentRotation());
 		bullet->Activate();
 
 		// set isShooting back to false on next tick
@@ -84,23 +93,21 @@ void ABaseTank::Move(FVector2D inputNormalized)
 	{
 		return;
 	}
-	// Let's get the dot product between the right vector and the direction;
-	// this will provide the sense we have to rotate the actor (at least on the forward two sectors)
-	float DotDirRight = FVector::DotProduct(FVector(inputNormalized.Y, inputNormalized.X, 0), GetActorRightVector());
+	FVector inputDirection(inputNormalized.Y, inputNormalized.X, 0);
+	// Let's get the dot product between the right vector and the direction
+	float DotDirRight = FVector::DotProduct(inputDirection, GetActorRightVector());
 
-	// Now we get the dot between the forward and direction;
-	// this will give us the angle to rotate and the sign to which adjust the rotation sense
-	float DotDirForw = FVector::DotProduct(FVector(inputNormalized.Y, inputNormalized.X, 0), GetActorForwardVector());
+	// Now we get the dot between the forward and direction
+	float DotDirForw = FVector::DotProduct(inputDirection, GetActorForwardVector());
+	
+	FRotator newRotation = inputDirection.Rotation();
+	if (DotDirForw < 0)
+	{
+		newRotation.Add(0, 180, 0);
+	}
 
-	// if the direction is not parallel to the forward we can rotate
-		float rotation = bodyRotationSpeed * GetWorld()->GetDeltaSeconds();
-		// now adjust the orientation with the dots sign
-		rotation *= FMath::Sign(DotDirForw) * FMath::Sign(DotDirRight);
-
-		AddActorWorldRotation(FRotator(0, rotation, 0));
+	SetActorRotation(FMath::RInterpTo(GetActorRotation(), newRotation, GetWorld()->GetDeltaSeconds(), bodyRotationSpeed));
 
 	// finally add the forward movement input
-	AddMovementInput(GetActorForwardVector(), 1 * FMath::Sign(DotDirForw));
-	// if you want to allow precise control over the movement speed with analogs then use this instead
-	//AddMovementInput(GetActorForwardVector(), DotDirForw);
+	AddMovementInput(GetActorForwardVector(), FMath::Sign(DotDirForw));
 }

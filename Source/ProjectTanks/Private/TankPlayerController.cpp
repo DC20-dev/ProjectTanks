@@ -76,7 +76,7 @@ void ATankPlayerController::SetupInputComponent()
 	GamepadMappingContext = NewObject<UInputMappingContext>(this);
 
 	// Movement
-	Mapkey(GamepadMappingContext, MoveAction, EKeys::Gamepad_Left2D, false, .1f);
+	Mapkey(GamepadMappingContext, MoveAction, EKeys::Gamepad_Left2D, false, .5f);
 	// Shoot
 	Mapkey(GamepadMappingContext, ShootAction, EKeys::Gamepad_RightShoulder);
 	// Place mine

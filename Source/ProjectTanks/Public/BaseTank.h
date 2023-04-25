@@ -33,12 +33,12 @@ protected:
 	UActorPoolComponent* Mines;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float bodyRotationSpeed = 200;
+	float bodyRotationSpeed = 10;
 
 	float shootStopDuration = .1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack", Meta = (MakeEditWidget = true))
-	FVector MuzzleLocation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack")
+	UStaticMeshComponent* Barrel;
 
 	bool bIsShooting = false;
 
