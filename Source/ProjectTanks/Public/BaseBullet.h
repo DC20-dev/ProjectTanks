@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/BoxComponent.h"
-#include "PoolableActor.h"
+#include "DamagingActor.h"
 #include "GameFramework/Actor.h"
 #include "BaseBullet.generated.h"
 
 UCLASS()
-class PROJECTTANKS_API ABaseBullet : public APoolableActor
+class PROJECTTANKS_API ABaseBullet : public ADamagingActor
 {
 	GENERATED_BODY()
 
@@ -21,12 +20,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int32 MaxBounces = 1;
 
-protected:	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* Mesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UBoxComponent* Box;
+protected:
 
 	int currentBounces = 0;
 
@@ -34,19 +28,13 @@ public:
 	// Sets default values for this actor's properties
 	ABaseBullet();
 
-	virtual void Activate() override;
-
 	virtual void Reset() override;
 
 	void Bounce(const FVector& HitNormal, const FVector& HitLocation);
 
-	UFUNCTION()
-	virtual void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
-
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
+	virtual void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
 
 public:	
 	// Called every frame

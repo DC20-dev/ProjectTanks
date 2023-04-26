@@ -40,7 +40,7 @@ protected:
 	UActorPoolComponent* Mines;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float bodyRotationSpeed = 10;
+	float BodyRotationSpeed = 10;
 
 	float shootStopDuration = .1f;
 
@@ -64,6 +64,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	virtual void PlaceMine();
+
+	// Call Super::TakeDamage after your operations when overriding
+	virtual float TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:	
 	// Called every frame

@@ -9,10 +9,6 @@ ABaseMine::ABaseMine()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	Tags.Add(FName(TEXT("mine")));
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
-	bIsActive = false;
-	SetActorHiddenInGame(true);
 }
 
 void ABaseMine::Activate()
@@ -22,9 +18,10 @@ void ABaseMine::Activate()
 
 void ABaseMine::Reset()
 {
-	// reset to initial state
+	// reset to initial state and do action (explosion)
 	Super::Reset();
 }
+
 
 // Called when the game starts or when spawned
 void ABaseMine::BeginPlay()

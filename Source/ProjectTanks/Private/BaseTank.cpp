@@ -47,6 +47,10 @@ ABaseTank::ABaseTank()
 
 void ABaseTank::ShootBullet()
 {
+	if (bIsShooting)
+	{
+		return;
+	}
 	ABaseBullet* bullet = (ABaseBullet*) Bullets->GetFromPool();
 	if (bullet)
 	{
@@ -67,6 +71,10 @@ void ABaseTank::ShootBullet()
 
 void ABaseTank::PlaceMine()
 {
+	if (bIsShooting)
+	{
+		return;
+	}
 	ABaseMine* mine = (ABaseMine*)Mines->GetFromPool();
 	if (mine)
 	{
@@ -81,6 +89,17 @@ void ABaseTank::PlaceMine()
 				bIsShooting = false;
 			}, shootStopDuration, false);
 	}
+}
+
+float ABaseTank::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	// has to be triggered to fire events in blueprints
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// common for all tanks is to explode on bullet hit or mine explosion
+	// we will only destroy it for the moment
+	Destroy();
+	return 0;
 }
 
 // Called when the game starts or when spawned
@@ -118,7 +137,7 @@ void ABaseTank::Move(FVector2D inputNormalized)
 		newRotation.Add(0, 180, 0);
 	}
 
-	SetActorRotation(FMath::RInterpTo(GetActorRotation(), newRotation, GetWorld()->GetDeltaSeconds(), bodyRotationSpeed));
+	SetActorRotation(FMath::RInterpTo(GetActorRotation(), newRotation, GetWorld()->GetDeltaSeconds(), BodyRotationSpeed));
 
 	// finally add the forward movement input
 	AddMovementInput(GetActorForwardVector(), FMath::Sign(DotDirForw));

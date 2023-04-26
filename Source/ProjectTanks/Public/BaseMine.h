@@ -3,18 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PoolableActor.h"
+#include "DamagingActor.h"
 #include "GameFramework/Actor.h"
 #include "BaseMine.generated.h"
 
 UCLASS()
-class PROJECTTANKS_API ABaseMine : public APoolableActor
+class PROJECTTANKS_API ABaseMine : public ADamagingActor
 {
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UStaticMeshComponent* Mesh;
 
 public:	
 	// Sets default values for this actor's properties
