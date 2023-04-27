@@ -17,22 +17,21 @@ ABaseTank::ABaseTank()
 	Collider->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
 	Collider->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
 	Collider->SetNotifyRigidBodyCollision(true);
-	Collider->AttachToComponent(Body, FAttachmentTransformRules::KeepRelativeTransform);
 	RootComponent = Collider;
 
 	Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body"));
 	check(Body);
 	Body->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Body->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	Body->SetupAttachment(RootComponent);
 
 	Turret = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret"));
 	check(Turret);
-	Turret->AttachToComponent(Body, FAttachmentTransformRules::KeepRelativeTransform);
+	Turret->SetupAttachment(Body);
 	Turret->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Muzzle"));
 	check(Barrel);
-	Barrel->AttachToComponent(Turret, FAttachmentTransformRules::KeepRelativeTransform);
+	Barrel->SetupAttachment(Turret);
 	Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));

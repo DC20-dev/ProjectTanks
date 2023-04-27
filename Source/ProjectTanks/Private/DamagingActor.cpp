@@ -11,12 +11,12 @@ ADamagingActor::ADamagingActor()
 	Box->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
 	Box->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
 	Box->SetNotifyRigidBodyCollision(true);
+	RootComponent = Box;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("mesh"));
 	check(Mesh);
-	RootComponent = Box;
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Mesh->AttachToComponent(Box, FAttachmentTransformRules::KeepRelativeTransform);
+	Mesh->SetupAttachment(Box);
 
 	bIsActive = false;
 	SetActorHiddenInGame(true);
