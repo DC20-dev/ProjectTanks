@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SphereComponent.h"
 #include "DamagingActor.h"
 #include "GameFramework/Actor.h"
 #include "BaseMine.generated.h"
@@ -13,6 +14,9 @@ class PROJECTTANKS_API ABaseMine : public ADamagingActor
 	GENERATED_BODY()
 
 protected:
+
+	UPROPERTY()
+	USphereComponent* ExplosionCollider;
 
 public:	
 	// Sets default values for this actor's properties

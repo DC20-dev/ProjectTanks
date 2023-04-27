@@ -9,6 +9,15 @@ ABaseMine::ABaseMine()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	Tags.Add(FName(TEXT("mine")));
+
+	ExplosionCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Explosion"));
+	check(ExplosionCollider);
+	// deactivate collisions and enable query only
+	ExplosionCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	ExplosionCollider->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	ExplosionCollider->SetNotifyRigidBodyCollision(false);
+	ExplosionCollider->SetGenerateOverlapEvents(true);
+	ExplosionCollider->SetupAttachment(RootComponent);
 }
 
 void ABaseMine::Activate()
