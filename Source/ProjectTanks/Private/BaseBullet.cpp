@@ -39,6 +39,11 @@ void ABaseBullet::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Othe
 			Reset();
 		}
 	}
+	else if (OtherActor->ActorHasTag(TEXT("mine")))
+	{
+		// do mine stuff
+		Reset();
+	}
 }
 
 // Called every frame

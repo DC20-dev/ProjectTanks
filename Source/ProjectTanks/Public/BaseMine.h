@@ -15,8 +15,14 @@ class PROJECTTANKS_API ABaseMine : public ADamagingActor
 
 protected:
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	USphereComponent* ExplosionCollider;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly)
+	float Lifespan = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly)
+	float ExplosionDuration = .1f;
 
 public:	
 	// Sets default values for this actor's properties
@@ -29,6 +35,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Reset() override;
+
+	UFUNCTION()
+	virtual void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	// Call Super::TakeDamage after your operations when overriding
+	virtual float TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:	
 	// Called every frame

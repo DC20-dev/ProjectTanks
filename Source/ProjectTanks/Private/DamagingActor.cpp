@@ -33,11 +33,6 @@ void ADamagingActor::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* O
 			Reset();
 		}
 	}
-	else if (OtherActor->ActorHasTag(TEXT("mine")))
-	{
-		// do mine stuff
-		Reset();
-	}
 	else if (OtherActor->ActorHasTag(TEXT("bullet")))
 	{
 		// do bullet stuff
