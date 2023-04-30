@@ -21,16 +21,12 @@ public:
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-		UStaticMeshComponent* Mesh;
+	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-		UBoxComponent* Box;
+	UBoxComponent* Box;
 
 protected:
-
-	UFUNCTION()
-	virtual void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
 
 	virtual void Reset() override;
 
