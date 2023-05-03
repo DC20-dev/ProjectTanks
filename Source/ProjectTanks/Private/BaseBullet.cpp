@@ -11,11 +11,10 @@ ABaseBullet::ABaseBullet()
 	PrimaryActorTick.bCanEverTick = true;
 	Tags.Add(FName(TEXT("bullet")));
 
-	Box->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
-	Box->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
-	Box->SetNotifyRigidBodyCollision(true);
-
-	Box->OnComponentHit.AddDynamic(this, &ABaseBullet::OnComponentHit);
+	Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Box->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	Box->SetGenerateOverlapEvents(true);
+	Box->OnComponentBeginOverlap.AddDynamic(this, &ABaseBullet::OnComponentBeginOverlapBox);
 }
 
 void ABaseBullet::Reset()
@@ -31,7 +30,7 @@ void ABaseBullet::Bounce(const FVector& HitNormal, const FVector& HitLocation)
 	currentBounces++;
 }
 
-void ABaseBullet::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ABaseBullet::OnComponentBeginOverlapBox(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor->ActorHasTag(TEXT("tank")))
 	{
@@ -56,7 +55,7 @@ void ABaseBullet::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Othe
 	{
 		if (currentBounces < MaxBounces)
 		{
-			Bounce(Hit.Normal, Hit.Location);
+			Bounce(SweepResult.Normal, SweepResult.Location);
 		}
 		else
 		{
@@ -82,6 +81,6 @@ void ABaseBullet::Tick(float DeltaTime)
 void ABaseBullet::Activate()
 {
 	Super::Activate();
-	Box->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
+	Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
