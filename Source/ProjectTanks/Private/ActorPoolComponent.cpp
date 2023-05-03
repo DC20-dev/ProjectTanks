@@ -37,6 +37,18 @@ void UActorPoolComponent::InitPool()
 	}
 }
 
+void UActorPoolComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
+{
+	// upon destruction clear the pool of inactive actors
+	// the active actors will destroy themselves if the owner is destroyed
+
+	APoolableActor* actor;
+	while (Pool.Dequeue(actor))
+	{
+		actor->Destroy();
+	}
+}
+
 // Sets default values for this component's properties
 UActorPoolComponent::UActorPoolComponent()
 {

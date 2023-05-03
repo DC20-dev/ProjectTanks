@@ -36,4 +36,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void InitPool();
 
+	virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;
+
 };

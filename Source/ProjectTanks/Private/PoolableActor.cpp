@@ -12,6 +12,12 @@ APoolableActor::APoolableActor()
 
 void APoolableActor::Reset()
 {
+	// if the owner has been destroyed we also destroy the bujllet at the end of its life instead of enqueueing it 
+	if (Owner->IsPendingKill())
+	{
+		Destroy();
+		return;
+	}
 	// execute delegate that places the bullet back in the queue
 	ResetDelegate.ExecuteIfBound(this);
 	bIsActive = false;
