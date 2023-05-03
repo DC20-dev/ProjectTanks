@@ -11,9 +11,9 @@ ADestructibleActor::ADestructibleActor()
 	Tags.Add(TEXT("destructible"));
 	
 	Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
-	Collider->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
-	Collider->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
-	Collider->SetNotifyRigidBodyCollision(true);
+	Collider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Collider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	Collider->SetGenerateOverlapEvents(true);
 }
 
 float ADestructibleActor::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
