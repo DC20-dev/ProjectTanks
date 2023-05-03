@@ -33,13 +33,14 @@ void ABaseMine::Activate()
 {
 	Super::Activate();
 	Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	FTimerHandle timerHandle;
-	GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &ABaseMine::Reset, Lifespan, false);
+	GetWorld()->GetTimerManager().SetTimer(ActivationHandle, this, &ABaseMine::Reset, Lifespan, false);
 	//TODO add visual representation for the last seconds before it blows up
 }
 
 void ABaseMine::Reset()
 {
+	// reset activation handle
+	GetWorld()->GetTimerManager().ClearTimer(ActivationHandle);
 	// do explosion
 	ExplosionCollider->SetGenerateOverlapEvents(true);
 	// delay resetting the mine in the pool just enought to have the explosion last a few more frames

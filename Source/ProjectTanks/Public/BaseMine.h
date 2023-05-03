@@ -24,6 +24,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadonly)
 	float ExplosionDuration = .1f;
 
+	FTimerHandle ActivationHandle;
+
 public:	
 	// Sets default values for this actor's properties
 	ABaseMine();
